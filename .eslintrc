@@ -1,0 +1,4 @@
+{
+  "extends": ["opengovsg"],
+  "ignorePatterns": ["coverage", "build"]
+}
