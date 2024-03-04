@@ -45,7 +45,7 @@
     "jest-extended": "^3.2.4",
     "jest-localstorage-mock": "^2.4.26",
     "jest-mock-axios": "^4.7.3",
-    "serverless": "^3.19.0",
+    "serverless": "^3.38.0",
     "serverless-dotenv-plugin": "^4.0.1",
     "ts-jest": "^29.0.5",
     "ts-loader": "^8.2.0",
