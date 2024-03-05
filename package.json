@@ -35,7 +35,7 @@
     "@types/node": "^18.0.1",
     "@types/pino": "^7.0.5",
     "@types/uuid": "^9.0.8",
-    "@types/watch": "^1.0.3",
+    "@types/watch": "^1.0.6",
     "dotenv-cli": "^6.0.0",
     "env-cmd": "^10.1.0",
     "eslint": "^8.57.0",
