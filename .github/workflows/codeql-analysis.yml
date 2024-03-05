@@ -11,7 +11,7 @@ jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
-    if: ${{ github.actor != 'dependabot[bot]' || github.event.action != 'push' }}
+    if: ${{ github.actor != 'dependabot[bot]' || github.action != 'push' }}
     strategy:
       fail-fast: false
       matrix:
