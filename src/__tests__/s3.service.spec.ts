@@ -116,6 +116,65 @@ describe('S3Service', () => {
         'Moved document in s3',
       )
     })
+
+    it('should move file to clean bucket and log for Cloudflare R2', async () => {
+      // Arrange
+      const r2Config = {
+        ...testConfig,
+        endpoint: 'https://accountid.r2.cloudflarestorage.com',
+      }
+      const mockS3Service = new S3Service(r2Config, mockLogger)
+
+      // Act
+      await mockS3Service.moveS3File({
+        sourceBucketName: 'sourceBucketName',
+        sourceObjectKey: 'sourceObjectKey',
+        sourceObjectVersionId: 'sourceObjectVersionId',
+        destinationBucketName: 'destinationBucketName',
+        destinationObjectKey: 'destinationObjectKey',
+      })
+
+      // Assert
+
+      expect(CopyObjectCommand).toHaveBeenCalledTimes(1)
+      expect(CopyObjectCommand).toHaveBeenCalledWith({
+        Key: 'destinationObjectKey',
+        Bucket: 'destinationBucketName',
+        CopySource: 'sourceBucketName/sourceObjectKey',
+      })
+
+      expect(DeleteObjectCommand).toHaveBeenCalledTimes(1)
+      expect(DeleteObjectCommand).toHaveBeenCalledWith({
+        Key: 'sourceObjectKey',
+        Bucket: 'sourceBucketName',
+        VersionId: 'sourceObjectVersionId',
+      })
+
+      expect(mockLoggerInfo).toHaveBeenCalledTimes(2)
+      expect(mockLoggerInfo).toHaveBeenNthCalledWith(
+        1,
+        {
+          sourceBucketName: 'sourceBucketName',
+          sourceObjectKey: 'sourceObjectKey',
+          sourceObjectVersionId: 'sourceObjectVersionId',
+          destinationBucketName: 'destinationBucketName',
+          destinationObjectKey: 'destinationObjectKey',
+        },
+        'Moving document in s3',
+      )
+      expect(mockLoggerInfo).toHaveBeenNthCalledWith(
+        2,
+        {
+          sourceBucketName: 'sourceBucketName',
+          sourceObjectKey: 'sourceObjectKey',
+          sourceObjectVersionId: 'sourceObjectVersionId',
+          destinationBucketName: 'destinationBucketName',
+          destinationObjectKey: 'destinationObjectKey',
+          destinationVersionId: 'mockObjectVersionId',
+        },
+        'Moved document in s3',
+      )
+    })
   })
   describe('getS3FileStreamWithVersionId', () => {
     it('should return file stream with version id', async () => {
@@ -180,6 +239,31 @@ describe('S3Service', () => {
         'Failed to get object objectKey from s3 bucket bucketName',
       )
     })
+
+    it('should return file stream without version id for R2', async () => {
+      // Arrange
+      const r2Config = {
+        ...testConfig,
+        endpoint: 'https://accountid.r2.cloudflarestorage.com',
+      }
+      const mockS3Service = new S3Service(r2Config, mockLogger)
+      getResult = {
+        Body: 'mockBody',
+        VersionId: '',
+      }
+
+      // Act
+      const result = await mockS3Service.getS3FileStreamWithVersionId({
+        bucketName: 'bucketName',
+        objectKey: 'objectKey',
+      })
+
+      // Assert
+      expect(result).toEqual({
+        body: 'mockBody',
+        versionId: '',
+      })
+    })
   })
 
   describe('deleteS3File', () => {
@@ -208,6 +292,47 @@ describe('S3Service', () => {
           bucketName: 'bucketName',
           objectKey: 'objectKey',
           versionId: 'versionId',
+        },
+        'Deleting document from s3',
+      )
+      expect(mockLoggerInfo).toHaveBeenNthCalledWith(
+        2,
+        {
+          bucketName: 'bucketName',
+          objectKey: 'objectKey',
+        },
+        'Deleted document from s3',
+      )
+    })
+
+    it('should delete file without version id and log for R2', async () => {
+      // Arrange
+      const r2Config = {
+        ...testConfig,
+        endpoint: 'https://accountid.r2.cloudflarestorage.com',
+      }
+      const mockS3Service = new S3Service(r2Config, mockLogger)
+
+      // Act
+      await mockS3Service.deleteS3File({
+        bucketName: 'bucketName',
+        objectKey: 'objectKey',
+        versionId: '',
+      })
+
+      // Assert
+      expect(DeleteObjectCommand).toHaveBeenCalledTimes(1)
+      expect(DeleteObjectCommand).toHaveBeenCalledWith({
+        Key: 'objectKey',
+        Bucket: 'bucketName',
+      })
+      expect(mockLoggerInfo).toHaveBeenCalledTimes(2)
+      expect(mockLoggerInfo).toHaveBeenNthCalledWith(
+        1,
+        {
+          bucketName: 'bucketName',
+          objectKey: 'objectKey',
+          versionId: '',
         },
         'Deleting document from s3',
       )

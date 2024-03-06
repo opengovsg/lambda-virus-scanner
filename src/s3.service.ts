@@ -17,8 +17,12 @@ import {
 export class S3Service {
   private readonly s3Client: S3Client
 
-  constructor(config: ConfigSchema, private readonly logger: Logger) {
-    const forcePathStyle = config.isTestOrDev || Boolean(config.endpoint)
+  constructor(
+    private readonly config: ConfigSchema,
+    private readonly logger: Logger,
+  ) {
+    const forcePathStyle =
+      this.config.isTestOrDev || Boolean(this.config.endpoint)
 
     this.s3Client = new S3Client({
       region: config.region,
@@ -29,6 +33,15 @@ export class S3Service {
           }
         : {}),
     })
+  }
+
+  get isR2(): boolean {
+    return (
+      Boolean(this.config.endpoint) &&
+      new URL(this.config.endpoint).hostname.endsWith(
+        '.r2.cloudflarestorage.com',
+      )
+    )
   }
 
   async getS3FileStreamWithVersionId({
@@ -55,7 +68,7 @@ export class S3Service {
         throw new Error('Body is empty')
       }
 
-      if (!versionId) {
+      if (!versionId && !this.isR2) {
         throw new Error('VersionId is empty')
       }
 
@@ -89,13 +102,17 @@ export class S3Service {
     )
 
     try {
-      await this.s3Client.send(
-        new DeleteObjectCommand({
-          Key: objectKey,
-          Bucket: bucketName,
-          VersionId: versionId,
-        }),
-      )
+      const params = this.isR2
+        ? {
+            Key: objectKey,
+            Bucket: bucketName,
+          }
+        : {
+            Key: objectKey,
+            Bucket: bucketName,
+            VersionId: versionId,
+          }
+      await this.s3Client.send(new DeleteObjectCommand(params))
 
       this.logger.info(
         {
@@ -124,7 +141,7 @@ export class S3Service {
     sourceObjectVersionId,
     destinationBucketName,
     destinationObjectKey,
-  }: MoveS3FileParams): Promise<string> {
+  }: MoveS3FileParams): Promise<string | undefined> {
     this.logger.info(
       {
         sourceBucketName,
@@ -141,11 +158,13 @@ export class S3Service {
         new CopyObjectCommand({
           Key: destinationObjectKey,
           Bucket: destinationBucketName,
-          CopySource: `${sourceBucketName}/${sourceObjectKey}?versionId=${sourceObjectVersionId}`,
+          CopySource: `${sourceBucketName}/${sourceObjectKey}${
+            this.isR2 ? '' : `?versionId=${sourceObjectVersionId}`
+          }`,
         }),
       )
 
-      if (!VersionId) {
+      if (!VersionId && !this.isR2) {
         this.logger.error(
           {
             sourceBucketName,

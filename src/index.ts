@@ -148,7 +148,7 @@ export const handler = async (
       versionId,
     })
 
-    let destinationVersionId: string
+    let destinationVersionId: string | undefined
 
     try {
       destinationVersionId = await s3Client.moveS3File({
