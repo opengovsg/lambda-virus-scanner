@@ -28,7 +28,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.134",
+    "@types/aws-lambda": "^8.10.136",
     "@types/clamscan": "^2.0.2",
     "@types/convict": "^6.1.6",
     "@types/jest": "^29.5.12",
