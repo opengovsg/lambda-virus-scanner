@@ -153,12 +153,8 @@ describe('S3Service', () => {
 
       expect(mockLoggerError).toHaveBeenCalledTimes(1)
       expect(mockLoggerError).toHaveBeenCalledWith(
-        expect.objectContaining({
-          bucketName: 'bucketName',
-          objectKey: 'objectKey',
-          error: new Error('Body is empty'),
-        }),
-        'Failed to get object from s3',
+        new Error('Body is empty'),
+        'Failed to get object objectKey from s3 bucket bucketName',
       )
     })
 
@@ -180,12 +176,8 @@ describe('S3Service', () => {
 
       expect(mockLoggerError).toHaveBeenCalledTimes(1)
       expect(mockLoggerError).toHaveBeenCalledWith(
-        expect.objectContaining({
-          bucketName: 'bucketName',
-          objectKey: 'objectKey',
-          error: new Error('VersionId is empty'),
-        }),
-        'Failed to get object from s3',
+        new Error('VersionId is empty'),
+        'Failed to get object objectKey from s3 bucket bucketName',
       )
     })
   })

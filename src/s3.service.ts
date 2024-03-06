@@ -70,12 +70,8 @@ export class S3Service {
       return { body, versionId } as GetS3FileStreamResult
     } catch (error) {
       this.logger.error(
-        {
-          bucketName,
-          objectKey,
-          error,
-        },
-        'Failed to get object from s3',
+        error,
+        `Failed to get object ${objectKey} from s3 bucket ${bucketName}`,
       )
 
       throw error
