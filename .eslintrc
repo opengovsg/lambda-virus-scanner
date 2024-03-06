@@ -1,4 +1,4 @@
 {
   "extends": ["opengovsg"],
-  "ignorePatterns": ["coverage", "build"]
+  "ignorePatterns": ["coverage", "build", "jest.config.js"]
 }

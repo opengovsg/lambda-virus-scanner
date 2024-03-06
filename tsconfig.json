@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "include": ["src/**/*", "jest.config.js"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "build", "envloader.js", "coverage"],
   "compilerOptions": {
     "allowJs": true,
