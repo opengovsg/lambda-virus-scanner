@@ -123,12 +123,8 @@ export class S3Service {
       )
     } catch (error) {
       this.logger.error(
-        {
-          bucketName,
-          objectKey,
-          error,
-        },
-        'Failed to delete object from s3',
+        error,
+        `Failed to delete object ${objectKey} from s3 bucket ${bucketName}`,
       )
 
       throw error
