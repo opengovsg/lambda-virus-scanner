@@ -22,7 +22,6 @@ function createBaseLogger({
     messageKey: 'message',
     nestedKey: 'payload', // Any objects passed to logger will be nested in payload, so they don't pollute metadata
     base: undefined, // Disable logging of host and pid
-    prettyPrint: prettyPrint ? { colorize: true } : undefined,
     // Add user readable level label text
     formatters: {
       level(label: string, number: number) {
