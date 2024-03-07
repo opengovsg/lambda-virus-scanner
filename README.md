@@ -12,6 +12,8 @@ This codebase is derived from services built for
 
 ## Workflow
 
+![Workflow Sequence Diagram](./docs/workflow-sequence.svg)
+
 Files are placed in an S3 bucket for quarantining incoming files. Both this 
 bucket, as well as the S3 bucket for holding files that have been scanned and 
 deemed clean, *must* have versioning enabled. Versioning ensures that the file
