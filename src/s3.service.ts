@@ -81,13 +81,17 @@ export class S3Service {
       )
 
       return { body, versionId } as GetS3FileStreamResult
-    } catch (error) {
+    } catch (err) {
       this.logger.error(
-        error,
-        `Failed to get object ${objectKey} from s3 bucket ${bucketName}`,
+        {
+          bucketName,
+          objectKey,
+          err,
+        },
+        'Failed to get object from s3',
       )
 
-      throw error
+      throw err
     }
   }
 
@@ -121,17 +125,17 @@ export class S3Service {
         },
         'Deleted document from s3',
       )
-    } catch (error) {
+    } catch (err) {
       this.logger.error(
         {
           bucketName,
           objectKey,
-          error,
+          err,
         },
         'Failed to delete object from s3',
       )
 
-      throw error
+      throw err
     }
   }
 
@@ -200,7 +204,7 @@ export class S3Service {
       )
 
       return VersionId
-    } catch (error) {
+    } catch (err) {
       this.logger.error(
         {
           sourceBucketName,
@@ -208,12 +212,12 @@ export class S3Service {
           sourceObjectVersionId,
           destinationBucketName,
           destinationObjectKey,
-          error,
+          err,
         },
         'Failed to move object in s3',
       )
 
-      throw error
+      throw err
     }
   }
 }

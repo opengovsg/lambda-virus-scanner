@@ -97,7 +97,7 @@ describe('handler', () => {
     expect(mockLoggerWarn).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'File not found',
-        error: new Error('File not found'),
+        err: new Error('File not found'),
         quarantineFileKey: mockUUID,
       }),
     )
@@ -175,8 +175,11 @@ describe('handler', () => {
     expect(MockS3Service.prototype.deleteS3File).not.toHaveBeenCalled()
     expect(mockLoggerError).toHaveBeenCalledTimes(1)
     expect(mockLoggerError).toHaveBeenCalledWith(
-      new Error('Failed to scan file'),
-      `Failed to scan file ${mockUUID}`,
+      expect.objectContaining({
+        err: new Error('Failed to scan file'),
+        message: 'Failed to scan file',
+        quarantineFileKey: mockUUID,
+      }),
     )
   })
 
@@ -248,10 +251,12 @@ describe('handler', () => {
     )
     expect(mockLoggerError).toHaveBeenCalledTimes(1)
     expect(mockLoggerError).toHaveBeenCalledWith(
-      new Error('Failed to move file'),
-      expect.stringContaining(
-        `Failed to move file from [local-virus-scanner-quarantine-bucket,${mockUUID},mockVersionId] to [local-virus-scanner-clean-bucket,`,
-      ),
+      expect.objectContaining({
+        bucket: 'local-virus-scanner-quarantine-bucket',
+        err: new Error('Failed to move file'),
+        key: mockUUID,
+        message: 'Failed to move file to clean bucket',
+      }),
     )
   })
 })

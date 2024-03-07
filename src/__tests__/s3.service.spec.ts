@@ -15,15 +15,13 @@ let getResult = {
 
 type Result = typeof getResult
 
+const mockS3Send = jest.fn<unknown, [Result, ...unknown[]], Result>()
+
 jest.mock('@aws-sdk/client-s3', () => {
   return {
     S3Client: jest.fn().mockImplementation(() => {
       return {
-        send: jest
-          .fn<unknown, [Result, ...unknown[]], Result>()
-          .mockImplementation((result) => {
-            return result
-          }),
+        send: mockS3Send,
       }
     }),
     CopyObjectCommand: jest.fn().mockImplementation(() => {
@@ -59,6 +57,10 @@ const testConfig = {
 describe('S3Service', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockS3Send.mockReset()
+    mockS3Send.mockImplementation((result) => {
+      return result
+    })
   })
   describe('moveS3File', () => {
     it('should move file to clean bucket and log', async () => {
@@ -175,6 +177,23 @@ describe('S3Service', () => {
         'Moved document in s3',
       )
     })
+
+    it('should throw on bad versionId from S3 client', async () => {
+      // Arrange
+      mockS3Send.mockReturnValue({ VersionId: undefined })
+      const mockS3Service = new S3Service(testConfig, mockLogger)
+
+      // Act and Assert
+      await expect(
+        mockS3Service.moveS3File({
+          sourceBucketName: 'sourceBucketName',
+          sourceObjectKey: 'sourceObjectKey',
+          sourceObjectVersionId: 'sourceObjectVersionId',
+          destinationBucketName: 'destinationBucketName',
+          destinationObjectKey: 'destinationObjectKey',
+        }),
+      ).rejects.toThrow(new Error('VersionId is empty'))
+    })
   })
   describe('getS3FileStreamWithVersionId', () => {
     it('should return file stream with version id', async () => {
@@ -212,8 +231,12 @@ describe('S3Service', () => {
 
       expect(mockLoggerError).toHaveBeenCalledTimes(1)
       expect(mockLoggerError).toHaveBeenCalledWith(
-        new Error('Body is empty'),
-        'Failed to get object objectKey from s3 bucket bucketName',
+        expect.objectContaining({
+          bucketName: 'bucketName',
+          objectKey: 'objectKey',
+          err: new Error('Body is empty'),
+        }),
+        'Failed to get object from s3',
       )
     })
 
@@ -235,8 +258,12 @@ describe('S3Service', () => {
 
       expect(mockLoggerError).toHaveBeenCalledTimes(1)
       expect(mockLoggerError).toHaveBeenCalledWith(
-        new Error('VersionId is empty'),
-        'Failed to get object objectKey from s3 bucket bucketName',
+        expect.objectContaining({
+          bucketName: 'bucketName',
+          objectKey: 'objectKey',
+          err: new Error('VersionId is empty'),
+        }),
+        'Failed to get object from s3',
       )
     })
 
@@ -343,6 +370,38 @@ describe('S3Service', () => {
           objectKey: 'objectKey',
         },
         'Deleted document from s3',
+      )
+    })
+
+    it('should log and rethrow on error while deleting', async () => {
+      // Arrange
+      const err = new Error('Failed to delete')
+      mockS3Send.mockRejectedValue(err as never)
+      const mockS3Service = new S3Service(testConfig, mockLogger)
+
+      // Act
+      await expect(
+        mockS3Service.deleteS3File({
+          bucketName: 'bucketName',
+          objectKey: 'objectKey',
+          versionId: 'mockVersion',
+        }),
+      ).rejects.toThrow(err)
+
+      // Assert
+      expect(DeleteObjectCommand).toHaveBeenCalledTimes(1)
+      expect(DeleteObjectCommand).toHaveBeenCalledWith({
+        Key: 'objectKey',
+        Bucket: 'bucketName',
+        VersionId: 'mockVersion',
+      })
+      expect(mockLoggerError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          bucketName: 'bucketName',
+          objectKey: 'objectKey',
+          err,
+        }),
+        'Failed to delete object from s3',
       )
     })
   })

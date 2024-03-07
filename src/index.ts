@@ -66,10 +66,10 @@ export const handler = async (
       bucketName: quarantineBucket,
       objectKey: quarantineFileKey,
     })
-  } catch (error) {
+  } catch (err) {
     logger.warn({
       message: 'File not found',
-      error,
+      err,
       quarantineFileKey,
     })
     return {
@@ -88,8 +88,12 @@ export const handler = async (
   let scanResult
   try {
     scanResult = await scanFileStream(body)
-  } catch (error) {
-    logger.error(error, `Failed to scan file ${quarantineFileKey}`)
+  } catch (err) {
+    logger.error({
+      message: 'Failed to scan file',
+      err,
+      quarantineFileKey,
+    })
     return {
       statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
       body: JSON.stringify({
@@ -118,12 +122,13 @@ export const handler = async (
         objectKey: quarantineFileKey,
         versionId,
       })
-    } catch (error) {
+    } catch (err) {
       // Log but do not halt execution as we still want to return 400 for malicious file
-      logger.error(
-        error,
-        `Failed to delete file ${quarantineFileKey} from quarantine bucket`,
-      )
+      logger.error({
+        message: 'Failed to delete file from quarantine bucket',
+        err,
+        key: quarantineFileKey,
+      })
     }
 
     return {
@@ -153,11 +158,13 @@ export const handler = async (
         destinationBucketName: cleanBucket,
         destinationObjectKey: cleanFileKey,
       })
-    } catch (error) {
-      logger.error(
-        error,
-        `Failed to move file from [${quarantineBucket},${quarantineFileKey},${versionId}] to [${cleanBucket},${cleanFileKey}]`,
-      )
+    } catch (err) {
+      logger.error({
+        message: 'Failed to move file to clean bucket',
+        err,
+        bucket: quarantineBucket,
+        key: quarantineFileKey,
+      })
       return {
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
         body: JSON.stringify({
