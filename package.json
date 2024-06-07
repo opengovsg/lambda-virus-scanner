@@ -24,7 +24,7 @@
     "clamscan": "^2.2.1",
     "convict": "^6.2.4",
     "http-status-codes": "^2.3.0",
-    "pino": "^8.20.0",
+    "pino": "^9.1.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
