@@ -25,7 +25,7 @@
     "convict": "^6.2.4",
     "http-status-codes": "^2.3.0",
     "pino": "^8.20.0",
-    "uuid": "^9.0.1"
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.140",
@@ -34,7 +34,7 @@
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.8",
     "@types/pino": "^7.0.5",
-    "@types/uuid": "^9.0.8",
+    "@types/uuid": "^10.0.0",
     "@types/watch": "^1.0.6",
     "dotenv-cli": "^7.4.2",
     "env-cmd": "^10.1.0",
