@@ -1,6 +1,6 @@
 {
   "name": "lambda-virus-scanner",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Lambda-based service to scan files for viruses, moving them into clean and quarantine S3 buckets",
   "scripts": {
     "env": "ENV=${ENV:-'development'} node scripts/envLoader.mjs",
