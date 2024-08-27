@@ -23,10 +23,19 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
       - run: echo TAGNAME=`echo ${{ github.ref_name }} | sed 's/v//'` >> ${GITHUB_ENV}
-      - name: Build and push
+      - name: Build and push default
         uses: docker/build-push-action@v6
         with:
           push: true
           tags: |
             opengovsg/lambda-virus-scanner:latest
             opengovsg/lambda-virus-scanner:${{ env.TAGNAME }}
+      - name: Build and push ecs variant
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          build-args: |
+            IS_LAMBDA=false
+          tags: |
+            opengovsg/lambda-virus-scanner:ecs-latest
+            opengovsg/lambda-virus-scanner:ecs-${{ env.TAGNAME }}
