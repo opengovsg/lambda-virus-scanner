@@ -37,5 +37,5 @@ jobs:
           build-args: |
             IS_LAMBDA=false
           tags: |
-            opengovsg/lambda-virus-scanner:ecs-latest
-            opengovsg/lambda-virus-scanner:ecs-${{ env.TAGNAME }}
+            opengovsg/lambda-virus-scanner:latest-ecs
+            opengovsg/lambda-virus-scanner:${{ env.TAGNAME }}-ecs
