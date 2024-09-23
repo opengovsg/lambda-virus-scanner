@@ -7,6 +7,8 @@ on:
 jobs:
   publish-docker:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write 
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
@@ -22,20 +24,39 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASS }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-session-name: github-action-ecr-deploy
+          aws-region: us-east-1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
       - run: echo TAGNAME=`echo ${{ github.ref_name }} | sed 's/v//'` >> ${GITHUB_ENV}
       - name: Build and push default
         uses: docker/build-push-action@v6
         with:
+          provenance: false
           push: true
           tags: |
             opengovsg/lambda-virus-scanner:latest
             opengovsg/lambda-virus-scanner:${{ env.TAGNAME }}
+            public.ecr.aws/f7c3i8y8/opengovsg/lambda-virus-scanner:latest
+            public.ecr.aws/f7c3i8y8/opengovsg/lambda-virus-scanner:${{ env.TAGNAME }}
       - name: Build and push ecs variant
         uses: docker/build-push-action@v6
         with:
+          provenance: false
           push: true
           build-args: |
             IS_LAMBDA=false
           tags: |
             opengovsg/lambda-virus-scanner:latest-ecs
             opengovsg/lambda-virus-scanner:${{ env.TAGNAME }}-ecs
+            public.ecr.aws/f7c3i8y8/opengovsg/lambda-virus-scanner:latest-ecs
+            public.ecr.aws/f7c3i8y8/opengovsg/lambda-virus-scanner:${{ env.TAGNAME }}-ecs
