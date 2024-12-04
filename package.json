@@ -36,7 +36,7 @@
     "@types/pino": "^7.0.5",
     "@types/uuid": "^10.0.0",
     "@types/watch": "^1.0.6",
-    "dotenv-cli": "^7.4.2",
+    "dotenv-cli": "^7.4.4",
     "env-cmd": "^10.1.0",
     "eslint": "^8.57.1",
     "eslint-config-opengovsg": "^3.0.0",
