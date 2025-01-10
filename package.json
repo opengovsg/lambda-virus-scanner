@@ -17,7 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.726.0",
-    "@aws-sdk/client-ssm": "^3.723.0",
+    "@aws-sdk/client-ssm": "^3.726.0",
     "aws-lambda": "^1.0.7",
     "aws-lambda-ric": "^3.2.1",
     "axios": "^1.7.9",
