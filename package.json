@@ -32,7 +32,7 @@
     "@types/clamscan": "^2.4.0",
     "@types/convict": "^6.1.6",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.13.1",
+    "@types/node": "^22.13.2",
     "@types/pino": "^7.0.5",
     "@types/uuid": "^10.0.0",
     "@types/watch": "^1.0.6",
