@@ -52,6 +52,6 @@
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "type-fest": "^4.39.0",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }
