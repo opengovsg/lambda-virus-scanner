@@ -1,4 +1,3 @@
-import { has } from 'lodash'
 import internal from 'stream'
 
 /**
@@ -14,7 +13,7 @@ export const isBodyWithKey = (body: unknown): body is KeyBody => {
   return (
     typeof body === 'object' &&
     !!body &&
-    has(body, 'key') &&
+    'key' in body &&
     typeof (body as KeyBody).key === 'string'
   )
 }

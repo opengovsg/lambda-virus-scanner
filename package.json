@@ -27,6 +27,11 @@
     "pino": "^9.6.0",
     "uuid": "^10.0.0"
   },
+  "overrides": {
+    "serverless-dotenv-plugin": {
+      "serverless": "$serverless"
+    }
+  },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.148",
     "@types/clamscan": "^2.4.1",
