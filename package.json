@@ -44,7 +44,7 @@
     "dotenv-cli": "^11.0.0",
     "env-cmd": "^10.1.0",
     "eslint": "^8.57.1",
-    "eslint-config-opengovsg": "^3.0.0",
+    "eslint-config-opengovsg": "^3.0.1",
     "jest": "^30.5.2",
     "jest-environment-jsdom": "^29.7.0",
     "jest-extended": "^7.0.0",
