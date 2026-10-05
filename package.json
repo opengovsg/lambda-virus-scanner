@@ -49,7 +49,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-extended": "^7.0.0",
     "jest-localstorage-mock": "^2.4.26",
-    "jest-mock-axios": "^4.8.0",
+    "jest-mock-axios": "^4.9.1",
     "serverless": "^4.43.0",
     "serverless-dotenv-plugin": "^6.0.0",
     "ts-jest": "^29.4.14",
